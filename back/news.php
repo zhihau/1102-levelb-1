@@ -6,31 +6,28 @@
                                 <tr class="yel">
                                     <td width="45%"><?=$DB->header?></td>
                                     <td width="23%"><?=$DB->append?></td>
-                                    <td width="7%">顯示</td>
                                     <td width="7%">刪除</td>
-                                    <td></td>
                                 </tr>
                                 <?php
-                                $rows=$Title->all();
+                                $all=$News->math('count','*');
+                                $div=3;
+                                $pages=ceil($all/$div);
+                                $now=$_GET['p']??1;
+                                $start=($now-1)*$div;
+                                $rows=$News->all(" limit $start,$div");
                                 foreach($rows as $row){
                                     $checked=($row['sh']==1)?"checked":"";
                                 ?>
                                 <tr>
                                     <td>
-                                        <img src="../img/<?=$row['img']?>"width="300px" height="30px"/>
+                                        <textarea name="text[]"  cols="30" rows="10"><?=$row['text']?></textarea>
                                     </td>
                                     <td>
-                                        <input type="text" name="text[]" value="<?=$row['text']?>">
-                                    </td>
-                                    <td>
-                                        <input type="radio" name="sh" <?=$checked?> value="<?=$row['id'];?>">
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="del[]" value="<?=$row['id'];?>">
+                                        <input type="checkbox" name="sh[]" <?=$checked?> value="<?=$row['id'];?>">
                                     </td>
                                     <td>
                                         <input type="hidden" name="id[]" value="<?=$row['id'];?>">
-                                        <input type="button" value="更新圖片" onclick="op(&#39;#cover&#39;,&#39;#cvr&#39;,&#39;modal/upload.php?do=<?=$DB->table?>&id=<?=$row['id']?>&#39;)">
+                                        <input type="checkbox" name="del[]" value="<?=$row['id'];?>">
                                     </td>
                                 </tr>
                                 <?php
@@ -38,7 +35,23 @@
                                 ?>
                             </tbody>
                         </table>
-                        <table style="margin-top:40px; width:70%;margin:auto">
+                        <div class="cent">
+                            <?php
+if(($now-1)>0){
+    $pre=$now-1;
+    echo "<a href='?do=$DB->table&p=$pre'> &lt; </a>";
+}
+for($i=1;$i<=$pages;$i++){
+    $size=($i==$now)?"24px":"16px";
+    echo "<a href='?do=$DB->table&p=$i' style='font-size:$size'> $i </a>";
+}
+if(($now+1)<=$pages){
+    $next=$now+1;
+    echo "<a href='?do=$DB->table&p=$next'> &gt; </a>";
+}
+                            ?>
+                            </div>
+                        <table style="margin-top:40px; width:70%;">
                             <tbody>
                                 <tr>
                                     <td width="200px"><input type="button"
